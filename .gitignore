@@ -6,6 +6,12 @@
 .RData
 .RDataTmp
 
+# Data folder
+/week*/data
+
+# DS.Store
+.DS_Store
+
 # User-specific files
 .Ruserdata
 
