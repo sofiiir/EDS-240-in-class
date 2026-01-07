@@ -7,7 +7,7 @@
 .RDataTmp
 
 # Data folder
-/week*/data
+/week*/data/
 
 # DS.Store
 .DS_Store
