@@ -1,0 +1,64 @@
+---
+title: "Bee Data Cleaning"
+format: html
+---
+
+```{r}
+# load packages ----
+library(tidyverse)
+library(janitor)
+
+```
+Read in data 
+```{r}
+bee <- read_csv(here::here("week1","data", "stressor.csv"))
+```
+```{r}
+# clean column names
+bee_clean <- clean_names(bee)
+```
+
+## Clean the stressor and state columns. Remove all special characters
+```{r}
+bee_clean <- bee_clean |> 
+      mutate(state = str_replace_all(state, "[^A-Za-z]", ""),
+        stressor = str_replace_all(stressor, "[^A-Za-z]", ""))
+```
+
+## Pivot data to include a column 
+```{r}
+tidy_bee <- bee_clean |> pivot_longer(cols = january_march:october_december,
+                                 names_to = "months",
+                                 values_to = "perc_col_exper_stress")
+```
+
+## Check the class of year 
+```{r}
+class(tidy_bee$year)
+```
+## Create a new column
+```{r}
+tidy_bee <- tidy_bee |> mutate(quarter = case_when (months == "january_march" ~ 1, 
+                                        months == "april_june" ~ 2,
+                                        months == "july_september" ~ 3,
+                                        months == "october_december" ~ 4))
+```
+## Choose a state and stressor
+```{r}
+ ca_bees <- filter(tidy_bee, state == "California" & stressor == "Disesases" ) 
+```
+## Group by year and quarter to calculate the average stress level
+```{r}
+average_stress <- ca_bees |> group_by(year, quarter) |> 
+                              summarise(avg_stress = mean(perc_col_exper_stress, na.rm = TRUE))
+```
+
+# Graph 
+
+```{r}
+ggplot(ca_bees, aes(year, perc_col_exper_stress, color = quarter)) +
+  geom_point() +
+  scale_color_discrete(values = c("#D77A61", "#773344", "#1F1A38", "hotpink"))
+```
+
+
