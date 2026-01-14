@@ -211,6 +211,9 @@ What should you carefully consider when checking the smoothing asumptions of you
 #| message: false
 
 #..................overlay histogram & density...................
+ggplot(mko_clean, aes(x = Temp_bot, y = after_stat(density))) + # scale down hist to match density curve
+  geom_histogram(fill = "gray", color = "black", alpha = 0.75) +
+  geom_density(linewidth = 1)
 ```
 
 ## Ridgeline plots
