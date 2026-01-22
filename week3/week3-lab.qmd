@@ -1,0 +1,8 @@
+---
+title: "week3-lab"
+format: html
+author: Sofia Rodas
+message: false
+warning: false
+---
+
