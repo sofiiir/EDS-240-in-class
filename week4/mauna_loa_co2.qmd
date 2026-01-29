@@ -1,0 +1,60 @@
+---
+title: "mauna_loa_co2"
+author: Sofia Rodas
+format: html
+---
+
+```{r}
+# load necessary libraries
+library(tidyverse)
+```
+
+```{r}
+# load in data skipping the first 35 rows and removing na
+data <- read_csv(here::here("week4", "data", "co2_weekly_mlo.csv"), skip = 35, na = ("-999.99")) |> janitor::clean_names()
+```
+```{r}
+data |> 
+  group_by(year) |> 
+  summarize(avg_avg = mean(average, na.rm = TRUE)) |> 
+  ggplot(aes(year, avg_avg)) +
+  geom_point() +
+  geom_line()
+```
+```{r}
+data |> 
+  group_by(year) |> 
+  mutate(year = as.factor(year)) |> 
+  ggplot(aes(average, year)) +
+  geom_point() +
+  geom_line ()
+```
+```{r}
+data |> 
+  group_by(year) |> 
+  summarise(avg_increase = mean(increase_since_1800, na.rm = TRUE)) |> 
+  ggplot() +
+  geom_col(aes(year, avg_increase)) +
+  theme_minimal()
+  
+```
+
+```{r}
+data |> 
+  ggplot() +
+  geom_point(aes(year, average), color = "red") +
+  geom_line(aes(year, average)) +
+  theme_minimal()
+```
+```{r}
+data |> 
+  group_by(year) |> 
+  summarise(avg_inc = mean(increase_since_1800, na.rm = TRUE)) |> 
+  ggplot() +
+  geom_col(aes(x = year, y = avg_inc)) +
+  theme_minimal() + 
+  labs(x = "Year",
+       y = "Average CO2 (ppm) Increase since 1800",
+       title = "Average CO2 Trends 1974 - Present")
+```
+
