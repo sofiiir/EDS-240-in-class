@@ -1,0 +1,157 @@
+---
+title: "TEMPLATE - alternative chart types practice"
+author: "Your Name"
+date: 2026-03-04
+toc: true
+---
+
+::: {.callout-note}
+This template accompanies the [alternative chart types practice slides](https://eds-240-data-viz.github.io/course-materials/lecture-slides/SLIDES-alt-charts.html#/title-slide){target="_blank}. Please be sure to cross-reference the slides, which contain important information and additional context!
+:::
+
+# Waffle Chart (Sasquatch sightings)
+
+- Typefaces used: Ultra & Josefin Sans
+- Colors used: "#357266", "#FFB813", "#983A06", "#005F71", "#757473", "#EFEFEF"
+
+```{r}
+#| eval: true
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-align: "center"
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..........................load packages.........................
+library(tidyverse)
+library(waffle)
+library(showtext)
+
+#..........................import data...........................
+bigfoot <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-09-13/bigfoot.csv')
+```
+
+
+```{r}
+#..........................load packages.........................
+library(tidyverse)
+library(showtext)
+library(ggbump)
+library(ggtext)
+
+flights <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-12/flights.csv') %>% 
+  janitor::clean_names()
+
+# Top 6 European countries by total flights
+top6 <- flights %>%
+  group_by(state_name) %>%
+  summarise(total = sum(flt_tot_1, na.rm = TRUE)) %>%
+  slice_max(total, n = 6) %>%
+  pull(state_name)
+
+# Annual ranks
+ranked <- flights %>%
+  filter(state_name %in% top6) %>%
+  group_by(year, state_name) %>%
+  summarise(total = sum(flt_tot_1, na.rm = TRUE), .groups = "drop") %>%
+  group_by(year) %>%
+  mutate(rank = rank(-total, ties.method = "first")) %>%
+  ungroup()
+
+# Blue hues palette
+blue_palette <- c(
+  "#08306b", "#2171b5", "#4292c6", "#6baed6", "#9ecae1", "#c6dbef"
+)
+
+bg_color <- "#3d9e8c"  # greener aquamarine
+
+ggplot(ranked, aes(x = year, y = rank, color = state_name, group = state_name)) +
+  geom_bump(linewidth = 1.4, smooth = 8) +
+  geom_point(size = 4) +
+  geom_text(
+    data = filter(ranked, year == min(year)),
+    aes(label = state_name), hjust = 1.15, fontface = "bold", size = 3.5
+  ) +
+  geom_text(
+    data = filter(ranked, year == max(year)),
+    aes(label = state_name), hjust = -0.15, fontface = "bold", size = 3.5
+  ) +
+  scale_y_reverse(breaks = 1:6) +
+  scale_x_continuous(
+    breaks = 2016:2022,
+    expand = expansion(mult = c(0.25, 0.25))
+  ) +
+  scale_color_manual(values = blue_palette) +
+  labs(
+    title = "European Countries Ranked by Total Flights",
+    subtitle = "Top 6 countries by combined incoming & outgoing flights, 2016–2022",
+    x = NULL, y = "Rank"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.background = element_rect(fill = bg_color, color = NA),
+    panel.background = element_rect(fill = bg_color, color = NA),
+    panel.grid.major = element_line(color = "white", linewidth = 0.3, linetype = "dashed"),
+    panel.grid.minor = element_blank(),
+    text = element_text(color = "white"),
+    axis.text = element_text(color = "white"),
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(size = 11, margin = margin(b = 10)),
+    legend.position = "none",
+    plot.margin = margin(20, 20, 20, 20)
+  )
+
+```
+
+# Bump chart (highest paying occupations)
+
+- Typefaces used: Passion One & Oxygen
+- Colors used: `viridisLite::magma()` & "#2A114E", "#6D6B71", "#FFF8F4"
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..........................load packages.........................
+library(tidyverse)
+library(ggbump)
+library(ggtext)
+library(showtext)
+
+#..........................import data...........................
+jobs <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/jobs_gender.csv")
+```
+
+# Stream graph (energy production)
+
+- Typefaces used: Exo 2 & Open Sans
+- Colors used: `paletteer::paletteer_d("MetBrewer::Archambault", n = 7)`
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..........................load packages.........................
+library(tidyverse)
+library(ggstream)
+library(ggtext)
+library(showtext)
+
+#..........................import data...........................
+capacity <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2022/2022-05-03/capacity.csv")
+```
+
+
+
+
+
+
+
+
+
+
+
